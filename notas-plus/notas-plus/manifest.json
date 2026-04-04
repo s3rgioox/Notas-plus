@@ -2,7 +2,7 @@
   "name": "Notas Plus",
   "short_name": "Notas Plus",
   "description": "Tu app de notas y recordatorios",
-  "start_url": "/Notas-plus/",
+  "start_url": "/notas-plus/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f0faf4",
