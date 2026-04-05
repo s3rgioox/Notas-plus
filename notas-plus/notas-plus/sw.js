@@ -1,70 +1,25 @@
-/* ════════════════════════════════════════════
-   NOTAS PLUS — Service Worker
-   Permite uso offline y mejora rendimiento
-   ════════════════════════════════════════════ */
+const CACHE_NAME = 'notasplus-v2';
+const ASSETS = ['/Notas-plus/', '/Notas-plus/index.html', '/Notas-plus/style.css', '/Notas-plus/app.js', '/Notas-plus/manifest.json'];
 
-const CACHE_NAME = 'notasplus-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap'
-];
-
-// Instalar y cachear assets
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS.filter(url => !url.startsWith('http')));
-    })
-  );
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)).catch(() => {}));
   self.skipWaiting();
 });
 
-// Activar y limpiar caches viejas
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
-  );
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))));
   self.clients.claim();
 });
 
-// Estrategia: Cache primero, red como fallback
-self.addEventListener('fetch', (event) => {
-  // Solo peticiones GET
-  if (event.request.method !== 'GET') return;
-
-  // Fuentes de Google: red primero
-  if (event.request.url.includes('fonts.googleapis') || event.request.url.includes('fonts.gstatic')) {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(response => {
-        if (!response || response.status !== 200) return response;
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return response;
-      });
-    }).catch(() => caches.match('/index.html'))
-  );
-});
-
-// Notificaciones push (preparado para futuras integraciones)
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow('/')
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+      if (res && res.status === 200) {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+      }
+      return res;
+    })).catch(() => caches.match('/Notas-plus/index.html'))
   );
 });

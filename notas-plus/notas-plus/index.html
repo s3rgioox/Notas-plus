@@ -7,168 +7,197 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Notas Plus">
   <meta name="theme-color" content="#f0faf4">
-  <meta name="description" content="Tu app de notas y recordatorios">
-
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-
   <title>Notas Plus</title>
-
-  <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- ══════════════════════════════════════
-       HEADER
+       PANTALLA AUTH (login / registro)
   ══════════════════════════════════════ -->
-  <header class="header">
-    <div class="header-inner">
-      <div class="header-brand">
+  <div class="auth-screen" id="auth-screen">
+    <div class="auth-card">
+      <div class="auth-brand">
         <span class="brand-leaf">🌿</span>
         <h1 class="brand-name">Notas <em>Plus</em></h1>
       </div>
-      <div class="header-actions">
-        <button class="btn-filter active" data-filter="all">Todas</button>
-        <button class="btn-filter" data-filter="pending">Pendientes</button>
-        <button class="btn-filter" data-filter="done">Hechas</button>
-      </div>
-    </div>
-  </header>
+      <p class="auth-tagline">Tus notas, siempre contigo</p>
 
-  <!-- ══════════════════════════════════════
-       STATS BAR
-  ══════════════════════════════════════ -->
-  <div class="stats-bar">
-    <div class="stat">
-      <span class="stat-num" id="stat-total">0</span>
-      <span class="stat-label">notas</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-num" id="stat-pending">0</span>
-      <span class="stat-label">pendientes</span>
-    </div>
-    <div class="stat-divider"></div>
-    <div class="stat">
-      <span class="stat-num" id="stat-today">0</span>
-      <span class="stat-label">hoy</span>
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Entrar</button>
+        <button class="auth-tab" id="tab-register">Crear cuenta</button>
+      </div>
+
+      <!-- Login -->
+      <div class="auth-form" id="form-login">
+        <div class="field">
+          <label class="field-label">Correo electrónico</label>
+          <input id="login-email" class="field-input" type="email" placeholder="tu@correo.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="field-label">Contraseña</label>
+          <input id="login-password" class="field-input" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn-forgot" id="btn-forgot">¿Olvidaste tu contraseña?</button>
+        <button class="btn-primary btn-full" id="btn-login">Entrar</button>
+      </div>
+
+      <!-- Registro -->
+      <div class="auth-form hidden" id="form-register">
+        <div class="field">
+          <label class="field-label">Nombre</label>
+          <input id="reg-name" class="field-input" type="text" placeholder="Tu nombre" autocomplete="name">
+        </div>
+        <div class="field">
+          <label class="field-label">Correo electrónico</label>
+          <input id="reg-email" class="field-input" type="email" placeholder="tu@correo.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="field-label">Contraseña</label>
+          <input id="reg-password" class="field-input" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+        <button class="btn-primary btn-full" id="btn-register">Crear cuenta</button>
+      </div>
+
+      <div class="auth-error" id="auth-error"></div>
+      <div class="auth-loading hidden" id="auth-loading">
+        <div class="spinner"></div>
+      </div>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       MAIN CONTENT
+       APP PRINCIPAL
   ══════════════════════════════════════ -->
-  <main class="main">
+  <div class="app-screen hidden" id="app-screen">
 
-    <!-- Empty state -->
-    <div class="empty-state" id="empty-state">
-      <div class="empty-illustration">
-        <div class="empty-circle"></div>
-        <span class="empty-emoji">🌱</span>
+    <header class="header">
+      <div class="header-inner">
+        <div class="header-brand">
+          <span class="brand-leaf">🌿</span>
+          <h1 class="brand-name">Notas <em>Plus</em></h1>
+        </div>
+        <div class="header-right">
+          <div class="header-actions">
+            <button class="btn-filter active" data-filter="all">Todas</button>
+            <button class="btn-filter" data-filter="pending">Pendientes</button>
+            <button class="btn-filter" data-filter="done">Hechas</button>
+          </div>
+          <div class="user-menu">
+            <button class="user-btn" id="user-btn">
+              <span class="user-avatar" id="user-avatar">S</span>
+            </button>
+            <div class="user-dropdown hidden" id="user-dropdown">
+              <div class="user-info">
+                <span class="user-name" id="user-name-display">—</span>
+                <span class="user-email" id="user-email-display">—</span>
+              </div>
+              <hr class="dropdown-divider">
+              <button class="dropdown-item danger" id="btn-logout">Cerrar sesión</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <h2 class="empty-title">Todo tranquilo por aquí</h2>
-      <p class="empty-sub">Crea tu primera nota con el botón verde</p>
+    </header>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-num" id="stat-total">0</span>
+        <span class="stat-label">notas</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num" id="stat-pending">0</span>
+        <span class="stat-label">pendientes</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-num" id="stat-today">0</span>
+        <span class="stat-label">hoy</span>
+      </div>
     </div>
 
-    <!-- Grid de notas -->
-    <div class="notes-grid" id="notes-grid"></div>
+    <main class="main">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-illustration">
+          <div class="empty-circle"></div>
+          <span class="empty-emoji">🌱</span>
+        </div>
+        <h2 class="empty-title">Todo tranquilo por aquí</h2>
+        <p class="empty-sub">Crea tu primera nota con el botón verde</p>
+      </div>
+      <div class="notes-grid" id="notes-grid"></div>
+    </main>
 
-  </main>
-
-  <!-- ══════════════════════════════════════
-       FAB — Botón crear nota
-  ══════════════════════════════════════ -->
-  <button class="fab" id="fab" aria-label="Nueva nota">
-    <span class="fab-icon">+</span>
-  </button>
+    <button class="fab" id="fab" aria-label="Nueva nota">
+      <span class="fab-icon">+</span>
+    </button>
+  </div>
 
   <!-- ══════════════════════════════════════
        MODAL — Crear / Editar nota
   ══════════════════════════════════════ -->
   <div class="modal-overlay" id="modal-overlay">
-    <div class="modal" id="modal" role="dialog" aria-modal="true">
-
+    <div class="modal">
       <div class="modal-header">
         <h2 class="modal-title" id="modal-title">Nueva nota</h2>
-        <button class="modal-close" id="modal-close" aria-label="Cerrar">×</button>
+        <button class="modal-close" id="modal-close">×</button>
       </div>
-
       <div class="modal-body">
-
-        <!-- Título -->
         <div class="field">
-          <label class="field-label" for="input-title">Título</label>
-          <input
-            id="input-title"
-            class="field-input"
-            type="text"
-            placeholder="¿De qué trata esta nota?"
-            maxlength="80"
-            autocomplete="off"
-          />
+          <label class="field-label">Título</label>
+          <input id="input-title" class="field-input" type="text" placeholder="¿De qué trata esta nota?" maxlength="80" autocomplete="off">
         </div>
-
-        <!-- Descripción -->
         <div class="field">
-          <label class="field-label" for="input-desc">Descripción</label>
-          <textarea
-            id="input-desc"
-            class="field-textarea"
-            placeholder="Añade los detalles que necesites..."
-            rows="4"
-          ></textarea>
+          <label class="field-label">Descripción</label>
+          <textarea id="input-desc" class="field-textarea" placeholder="Añade los detalles que necesites..." rows="4"></textarea>
         </div>
-
-        <!-- Recordatorio -->
         <div class="field">
           <div class="reminder-toggle-row">
-            <label class="field-label" for="toggle-reminder">Recordatorio</label>
+            <label class="field-label">Recordatorio</label>
             <label class="toggle">
               <input type="checkbox" id="toggle-reminder">
               <span class="toggle-slider"></span>
             </label>
           </div>
-
           <div class="reminder-fields" id="reminder-fields">
             <div class="datetime-grid">
               <div class="field-inline">
-                <label class="field-label-sm" for="input-date">Fecha</label>
+                <label class="field-label-sm">Fecha</label>
                 <input id="input-date" class="field-input-sm" type="date">
               </div>
               <div class="field-inline">
-                <label class="field-label-sm" for="input-time">Hora</label>
+                <label class="field-label-sm">Hora</label>
                 <input id="input-time" class="field-input-sm" type="time">
               </div>
             </div>
             <p class="reminder-hint" id="reminder-hint"></p>
           </div>
         </div>
-
-        <!-- Color de nota -->
         <div class="field">
           <label class="field-label">Color</label>
           <div class="color-picker">
-            <button class="color-dot active" data-color="white" style="background:#ffffff" title="Blanco"></button>
-            <button class="color-dot" data-color="mint"  style="background:#d4f5e2" title="Menta"></button>
-            <button class="color-dot" data-color="sage"  style="background:#c8e6c9" title="Salvia"></button>
-            <button class="color-dot" data-color="lime"  style="background:#e8f5e9" title="Lima"></button>
-            <button class="color-dot" data-color="cream" style="background:#fffde7" title="Crema"></button>
-            <button class="color-dot" data-color="sky"   style="background:#e3f2fd" title="Cielo"></button>
+            <button class="color-dot active" data-color="white" style="background:#ffffff"></button>
+            <button class="color-dot" data-color="mint"  style="background:#d4f5e2"></button>
+            <button class="color-dot" data-color="sage"  style="background:#c8e6c9"></button>
+            <button class="color-dot" data-color="lime"  style="background:#e8f5e9"></button>
+            <button class="color-dot" data-color="cream" style="background:#fffde7"></button>
+            <button class="color-dot" data-color="sky"   style="background:#e3f2fd"></button>
           </div>
         </div>
-
       </div>
-
       <div class="modal-footer">
         <button class="btn-secondary" id="btn-cancel">Cancelar</button>
-        <button class="btn-primary" id="btn-save">Guardar nota</button>
+        <button class="btn-primary" id="btn-save">
+          <span id="btn-save-text">Guardar nota</span>
+          <div class="spinner hidden" id="save-spinner"></div>
+        </button>
       </div>
-
     </div>
   </div>
 
@@ -176,12 +205,12 @@
        MODAL — Detalle de nota
   ══════════════════════════════════════ -->
   <div class="modal-overlay" id="detail-overlay">
-    <div class="modal modal-detail" id="detail-modal">
+    <div class="modal modal-detail">
       <div class="modal-header">
         <span class="detail-badge" id="detail-badge"></span>
         <div class="detail-header-actions">
-          <button class="btn-icon" id="detail-edit" title="Editar">✏️</button>
-          <button class="btn-icon danger" id="detail-delete" title="Eliminar">🗑️</button>
+          <button class="btn-icon" id="detail-edit">✏️</button>
+          <button class="btn-icon danger" id="detail-delete">🗑️</button>
           <button class="modal-close" id="detail-close">×</button>
         </div>
       </div>
@@ -198,11 +227,6 @@
   </div>
 
   <!-- ══════════════════════════════════════
-       NOTIFICACIÓN TOAST
-  ══════════════════════════════════════ -->
-  <div class="toast" id="toast"></div>
-
-  <!-- ══════════════════════════════════════
        MODAL — Aviso de recordatorio
   ══════════════════════════════════════ -->
   <div class="modal-overlay alarm-overlay" id="alarm-overlay" style="display:none">
@@ -214,6 +238,9 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <div class="toast" id="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>

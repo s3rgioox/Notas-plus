@@ -2,7 +2,7 @@
   "name": "Notas Plus",
   "short_name": "Notas Plus",
   "description": "Tu app de notas y recordatorios",
-  "start_url": "/Notas-plus/notas-plus/",
+  "start_url": "/Notas-plus/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f0faf4",
@@ -20,16 +20,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    }
-  ],
-  "categories": ["productivity", "utilities"],
-  "shortcuts": [
-    {
-      "name": "Nueva nota",
-      "short_name": "Nueva",
-      "description": "Crear una nota rápida",
-      "url": "/?new=1",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
